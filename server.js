@@ -23,8 +23,8 @@ function auth(req) {
   if(!p) throw Error('No se encuentra tu sesión. La sala puede haber caducado.');
   return {r,p};
 }
-const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.webmanifest':'application/manifest+json'};
-const publicFiles=new Set(['index.html','styles.css','app.js','config.js','icon.svg','manifest.webmanifest']);
+const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.webmanifest':'application/manifest+json','.wav':'audio/wav'};
+const publicFiles=new Set(['index.html','styles.css','app.js','config.js','icon.svg','manifest.webmanifest','audio.js','web-ads.js','web-ads-config.js',...['menu','partida'].map(n=>'assets/music/'+n+'.wav'),...['card','countdown','start','success','won','mistake','lost','test'].map(n=>'assets/sounds/'+n+'.wav')]);
 const server=http.createServer(async(req,res)=>{
   const origin=req.headers.origin;
   res.setHeader('X-Content-Type-Options','nosniff');

@@ -4,14 +4,14 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#09181d"><meta name="description" content="Un juego cooperativo de intuición. Jugad vuestras cartas en orden y encontrad vuestro ritmo.">
 <title>Synchrony · Enlaza tu Mente</title>
-<link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css">
-<script src="config.js" defer></script><script src="app.js" defer></script>
+<link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css?v=20261005">
+<script src="config.js" defer></script><script src="audio.js?v=20261005" defer></script><script src="web-ads-config.js" defer></script><script src="web-ads.js?v=20261005" defer></script><script src="app.js?v=20261005" defer></script>
 </head>
 <body>
 <div class="ambient" aria-hidden="true"></div>
 <header class="topbar">
 <a class="brand" href="./" aria-label="Synchrony, inicio"><img src="icon.svg" alt="" width="42" height="42"><span>synchr<span class="brand-o">o</span>ny<small>ENLAZA TU MENTE</small></span></a>
-<div class="header-actions"><span id="connection" class="connection">Encuentra tu ritmo</span><button id="sound" class="icon-button" aria-label="Activar sonido" title="Activar sonido">♪<span id="sound-label"> OFF</span></button><button id="help" class="icon-button" aria-label="Cómo jugar">?</button></div>
+<div class="header-actions"><span id="connection" class="connection">Encuentra tu ritmo</span><button id="sound" class="icon-button" aria-label="Activar sonido" title="Activar sonido">♪<span id="sound-label"> OFF</span></button><button id="settings" class="icon-button" aria-label="Ajustes de audio" title="Música, sonido y vibración">⚙</button><button id="help" class="icon-button" aria-label="Cómo jugar">?</button></div>
 </header>
 <main>
 <section id="home" class="home">
@@ -22,7 +22,7 @@
 <label for="name">Tu nombre</label><input id="name" maxlength="24" autocomplete="nickname" placeholder="¿Cómo te llamas?" required>
 <div class="tabs" role="tablist" aria-label="Tipo de partida"><button role="tab" aria-selected="true" aria-controls="create-panel" id="tab-create" data-tab="create">Crear sala</button><button role="tab" aria-selected="false" aria-controls="join-panel" id="tab-join" data-tab="join">Unirme</button><button role="tab" aria-selected="false" aria-controls="match-panel" id="tab-match" data-tab="match">Online</button></div>
 <form id="create-panel" class="tab-panel" role="tabpanel" aria-labelledby="tab-create"><div class="fields"><div><label for="players">Jugadores</label><input id="players" type="number" inputmode="numeric" min="1" value="2" required></div><div><label for="deck">Cartas de la baraja</label><input id="deck" type="number" inputmode="numeric" min="2" max="100000" value="100" required></div></div><p class="field-note">Tu sala, vuestro ritmo. Las salas privadas no tienen el límite de 8 jugadores.</p><button class="primary" type="submit">Crear partida <span>↗</span></button><div class="panel-foot">Privada · Comparte el código con tu equipo</div></form>
-<form id="join-panel" class="tab-panel" role="tabpanel" aria-labelledby="tab-join" hidden><label for="code">Código de la sala</label><input id="code" class="code-input" maxlength="6" minlength="6" pattern="[a-zA-Z0-9]{6}" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="aB3xY9" required><p class="field-note">6 caracteres. Las mayúsculas y minúsculas son diferentes.</p><button class="primary" type="submit">Enlazarme a la sala <span>↗</span></button></form>
+<form id="join-panel" class="tab-panel" role="tabpanel" aria-labelledby="tab-join" hidden><label for="code">Código o enlace de la sala</label><input id="code" class="code-input" maxlength="2048" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="aB3xY9" required><p class="field-note">6 caracteres. Las mayúsculas y minúsculas son diferentes.</p><button class="primary" type="submit">Enlazarme a la sala <span>↗</span></button></form>
 <form id="match-panel" class="tab-panel" role="tabpanel" aria-labelledby="tab-match" hidden><label for="online-players">Tamaño del equipo</label><select id="online-players"><option value="2">2 jugadores</option><option value="3">3 jugadores</option><option value="4">4 jugadores</option><option value="5">5 jugadores</option><option value="6">6 jugadores</option><option value="7">7 jugadores</option><option value="8">8 jugadores</option></select><p class="field-note">Te conectaremos con otros jugadores que busquen el mismo tamaño de equipo. Baraja de 100 cartas.</p><button class="primary" type="submit">Buscar partida <span>↗</span></button></form>
 <p id="form-error" class="error" role="alert"></p>
 <details class="server-settings"><summary>Conexión al servidor</summary><label for="server-url">Dirección de Render</label><input id="server-url" type="url" placeholder="https://tu-servidor.onrender.com"><button id="save-server" class="secondary" type="button">Guardar conexión</button><small>Solo es necesario configurarla una vez si la web no tiene servidor asignado.</small></details>
@@ -43,5 +43,14 @@
 <div id="toast" class="toast" role="status" hidden></div>
 <dialog id="help-dialog"><button class="dialog-close" aria-label="Cerrar">×</button><div class="eyebrow">EL ARTE DE ESPERAR</div><h2>Enlaza tu mente.</h2><ol><li>Cada uno recibe <b>1 carta en la primera ronda</b>, 2 en la segunda y así sucesivamente.</li><li>Jugad todas las cartas de <b>menor a mayor</b>. No hay turnos: pulsa la carta cuando creas que ha llegado su momento.</li><li>Si alguien se adelanta a una carta menor, perdéis una de las <b>5 vidas</b> y repetís la ronda con nuevas cartas.</li><li>Todos debéis pulsar <b>Estoy listo</b>. Después, una cuenta atrás de 5 segundos os conecta.</li><li>Superad una ronda jugando al menos el <b>79 % de la baraja</b> para ganar. No hay cartas especiales.</li></ol><p>Cada ronda tiene 5 segundos por carta de la baraja (100 cartas = 8 min 20 s). Las esperas no consumen ese tiempo.</p><p>Una desconexión permite volver durante 30 segundos. Después, se retiran las cartas de esa persona, que podrá seguir como espectador. La sala caduca tras 15 minutos sin acciones de ningún jugador.</p><button class="primary dialog-close-button">Entendido. Conectemos ↗</button></dialog>
 <dialog id="leave-dialog"><h2>¿Abandonar la sala?</h2><p>Si la partida ha empezado, se retirarán tus cartas y dejarás de participar.</p><div class="dialog-actions"><button class="secondary" id="cancel-leave">Seguir aquí</button><button class="primary" id="confirm-leave">Salir</button></div></dialog>
+<dialog id="audio-dialog" aria-labelledby="audio-title"><button id="audio-close" class="dialog-close" aria-label="Cerrar ajustes">×</button><div class="eyebrow">A TU RITMO</div><h2 id="audio-title">El sonido de conectar.</h2>
+<label class="audio-switch"><span>Música de fondo<small>Instrumental · sin voces</small></span><input id="music-on" type="checkbox" role="switch"></label>
+<label for="music-volume">Volumen de música <output id="music-value">22 %</output></label><input id="music-volume" type="range" min="0" max="50" step="1" value="22">
+<p id="audio-status" class="audio-caption" role="status">Pulsa un botón para iniciar el audio.</p>
+<label class="audio-switch"><span>Efectos de sonido</span><input id="effects-on" type="checkbox" role="switch"></label>
+<label class="audio-switch"><span>Vibración</span><input id="vibration-on" type="checkbox" role="switch"></label>
+<div class="audio-tests"><button id="test-sound" class="secondary">♪ Probar sonido</button><button id="test-vibration" class="secondary">⌁ Probar vibración</button></div>
+<p class="audio-caption">Sube el volumen multimedia. En iPhone revisa el modo silencio. La vibración depende del móvil y del navegador; no está disponible en Safari de iPhone.</p>
+<p id="ads-status" class="audio-caption" role="status"></p><button id="audio-done" class="primary">Listo ✓</button></dialog>
 <noscript>Activa JavaScript para jugar a Synchrony.</noscript>
 </body></html>
