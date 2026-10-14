@@ -33,7 +33,8 @@ class Game {
   alive(r) { return this.active(r).filter(p=>p.online); }
   ready(r,p) {
     if(!['lobby','between','retry'].includes(r.phase) || p.excluded) fail('Ahora no puedes marcarte como listo.');
-    p.ready = !p.ready; this.touch(r); this.emit(r,'ready',p.ready ? `${p.name} está listo.` : `${p.name} necesita un momento.`); this.maybeCountdown(r);
+    p.ready = !p.ready; p.finishedRound = false;
+this.touch(r); this.touch(r); this.emit(r,'ready',p.ready ? `${p.name} está listo.` : `${p.name} necesita un momento.`); this.maybeCountdown(r);
   }
   maybeCountdown(r) {
     const active=this.active(r);
