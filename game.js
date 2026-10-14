@@ -24,9 +24,9 @@ class Game {
   join(r, name) {
     if(r.phase !== 'lobby') fail('La partida ya ha empezado.');
     if(r.players.length >= r.capacity) fail('La sala está completa.');
-    if(typeof name !== 'string' || !name.trim() || name.trim().length>24) fail('Escribe un nombre de 1 a 24 caracteres.');
+    if(typeof name !== 'string' || !name.trim() || name.trim().length>12) fail('Escribe un nombre de 1 a 12 caracteres.');
     const p = { id:randomBytes(12).toString('hex'), token:randomBytes(32).toString('hex'), name:name.trim(), hand:[], ready:false,
-      online:true, lastSeen:this.now(), disconnectedAt:null, excluded:false };
+      online:true, lastSeen:this.now(), disconnectedAt:null, excluded:false, finishedRound:false };
     r.players.push(p); this.touch(r); this.emit(r,'join',`${p.name} se ha conectado.`); return p;
   }
   active(r) { return r.players.filter(p=>!p.excluded); }
@@ -51,7 +51,7 @@ class Game {
   }
   start(r) {
     const active=this.active(r); if(!active.length) return;
-    r.players.forEach(p=>{p.hand=[];p.ready=false;});
+    r.players.forEach(p=>{p.hand=[];p.ready=false;p.finishedRound=false;});
     const deck=Array.from({length:r.deck},(_,i)=>i+1);
     for(let i=deck.length-1;i>0;i--) { const j=randomInt(i+1); [deck[i],deck[j]]=[deck[j],deck[i]]; }
     r.dealt=Math.min(r.deck,active.length*r.round);
@@ -62,7 +62,7 @@ class Game {
   }
   lose(r,text) {
     r.lives--; r.phase=r.lives>0?'retry':'lost'; r.deadline=null;
-    r.players.forEach(p=>{p.ready=false;p.hand=[];});
+    r.players.forEach(p=>{p.ready=false;p.hand=[];p.finishedRound=false;});
     this.emit(r,r.phase==='lost'?'lost':'mistake',text);
   }
   complete(r) {
@@ -79,10 +79,11 @@ class Game {
     if(revision!==r.revision) fail('La mesa ha cambiado. Comprueba tu carta y vuelve a pulsar.');
     if(!Number.isSafeInteger(card) || !p.hand.includes(card)) fail('Esa carta no está en tu mano.');
     if(this.now()>=r.deadline) { this.lose(r,'Se agotó el tiempo.'); return; }
+    card=p.hand[0]; // Cualquier carta propia selecciona la menor de la mano.
     this.touch(r);
     const lowest=this.active(r).reduce((min,x)=>x.hand.length?Math.min(min,x.hand[0]):min,Infinity);
     if(card!==lowest) { this.lose(r,`${p.name} jugó ${card}, pero quedaba una carta menor (${lowest}).`); return; }
-    p.hand.splice(p.hand.indexOf(card),1); r.last=card; r.played++;
+    p.hand.splice(p.hand.indexOf(card),1); r.last=card; r.played++; p.finishedRound=p.hand.length===0;
     this.emit(r,'card',`${p.name} ha jugado ${card}.`,{card,player:p.name}); this.complete(r);
   }
   connect(r,p) {
@@ -97,7 +98,7 @@ class Game {
   remove(r,p) {
     this.cancelCountdown(r);
     if(r.phase==='lobby') r.players=r.players.filter(x=>x!==p);
-    else { r.removed+=p.hand.length; p.hand=[]; p.excluded=true;p.ready=false; }
+    else { r.removed+=p.hand.length; p.hand=[]; p.excluded=true;p.ready=false;p.finishedRound=false; }
     this.emit(r,'leave',`${p.name} ya no participa. Sus cartas se retiran.`);
     this.complete(r); this.maybeCountdown(r);
     if(!this.active(r).length) {r.phase='abandoned';r.deadline=null;this.emit(r,'abandoned','La partida se ha quedado sin jugadores.');}
@@ -116,7 +117,7 @@ class Game {
   view(r,p) {
     return {code:r.code,capacity:r.capacity,deck:r.deck,public:r.public,phase:r.phase,round:r.round,lives:r.lives,last:r.last,
       dealt:r.dealt,played:r.played,removed:r.removed,revision:r.revision,event:r.event,deadline:r.deadline,countdownAt:r.countdownAt,serverNow:this.now(),
-      me:p.id,hand:p.hand,players:r.players.map(x=>({id:x.id,name:x.name,ready:x.ready,online:x.online,excluded:x.excluded,count:x.hand.length,disconnectedAt:x.disconnectedAt}))};
+      me:p.id,hand:p.hand,players:r.players.map(x=>({id:x.id,name:x.name,ready:x.ready,online:x.online,excluded:x.excluded,count:x.hand.length,finishedRound:x.finishedRound,disconnectedAt:x.disconnectedAt}))};
   }
 }
 module.exports={Game};

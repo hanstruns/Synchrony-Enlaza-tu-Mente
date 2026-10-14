@@ -24,7 +24,7 @@ function auth(req) {
   return {r,p};
 }
 const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml','.webmanifest':'application/manifest+json','.wav':'audio/wav'};
-const publicFiles=new Set(['index.html','styles.css','app.js','config.js','icon.svg','manifest.webmanifest','audio.js','web-ads.js','web-ads-config.js',...['menu','partida'].map(n=>'assets/music/'+n+'.wav'),...['card','countdown','start','success','won','mistake','lost','test'].map(n=>'assets/sounds/'+n+'.wav')]);
+const publicFiles=new Set(['index.html','styles.css','app.js','config.js','icon.svg','manifest.webmanifest','audio.js','web-ads.js','web-ads-config.js','side-ads.js','side-ads-config.js',...['menu','partida'].map(n=>'assets/music/'+n+'.wav'),...['card','countdown','start','success','won','mistake','lost','test'].map(n=>'assets/sounds/'+n+'.wav')]);
 const server=http.createServer(async(req,res)=>{
   const origin=req.headers.origin;
   res.setHeader('X-Content-Type-Options','nosniff');
@@ -56,7 +56,7 @@ const server=http.createServer(async(req,res)=>{
       let body='';for await(const chunk of req) {body+=chunk;if(body.length>4096) throw Error('Petición demasiado grande.');}
       const b=JSON.parse(body);let r,p;
       if(['create','join','match'].includes(b.action)) {
-        if(typeof b.name!=='string' || !b.name.trim() || b.name.trim().length>24) throw Error('Escribe un nombre de 1 a 24 caracteres.');
+        if(typeof b.name!=='string' || !b.name.trim() || b.name.trim().length>12) throw Error('Escribe un nombre de 1 a 12 caracteres.');
         if(b.action==='create') {if(game.rooms.size>=1000) throw Error('Servidor lleno. Prueba más tarde.');r=game.create(b);}
         if(b.action==='join') {r=game.rooms.get(b.code);if(!r) throw Error('No existe esa sala. Respeta las mayúsculas y minúsculas.');}
         if(b.action==='match') {
