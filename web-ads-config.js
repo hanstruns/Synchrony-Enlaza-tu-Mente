@@ -3,5 +3,5 @@
 window.SYNCHRONY_WEB_ADS = {
   enabled: true,
   publisher: 'pub-2496991076440019', // ca-pub-XXXXXXXXXXXXXXXX, proporcionado por AdSense.
-  testMode: true // Mantener true durante las pruebas de integración.
+  testMode: false // Mantener true durante las pruebas de integración.
 };
