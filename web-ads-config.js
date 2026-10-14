@@ -2,6 +2,6 @@
 // Los IDs ca-app-pub de AdMob móvil NO se utilizan aquí.
 window.SYNCHRONY_WEB_ADS = {
   enabled: true,
-  publisher: 'pub-2496991076440019', // ca-pub-XXXXXXXXXXXXXXXX, proporcionado por AdSense.
+  publisher: 'ca-pub-2496991076440019', // ca-pub-XXXXXXXXXXXXXXXX, proporcionado por AdSense.
   testMode: false // Mantener true durante las pruebas de integración.
 };
